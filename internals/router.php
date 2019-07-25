@@ -24,7 +24,7 @@ function _currentUser(): ?ActiveRow
     if(!hash_equals($token->token, $tok)) return null;
     
     $user = $users->get($user);
-    if(!is_null($user->block_reason)) exit("<b>Произошла ошибка</b>: вас забанили по причине <em>".$user->block_reason."</em>. Сожалеем об этом");
+    if(!is_null($user->block_reason)) exit("<b>Произошла ошибка</b>: вас забанили по причине <em>".$user->block_reason."</em>. Сожалеем об этом.");
     
     return $user;
 }
@@ -36,16 +36,20 @@ function _validateCaptcha(string $key, string $token, bool $ip): bool
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, "https://hcaptcha.com/siteverify");
     curl_setopt($curl, CURLOPT_POST, 1);
-    curl_setopt($curl, CURLOPT_POSTFIELDS,
-            "secret=$key&resposnse=$token");
+    curl_setopt($curl, CURLOPT_POSTFIELDS, [
+        "secret"   => $key,
+        "response" => $token,
+    ]);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($curl, CURLOPT_TIMEOUT_MS, 1500);
+    curl_setopt($curl, CURLOPT_AUTOREFERER, true);
+    curl_setopt($curlHandle, CURLOPT_HTTPHEADER, [
+        "Content-Type: x-www-form/urlencoded",
+    ]);
     
     $response = curl_exec($curl);
     curl_close($curl);
     
-    return true; //TODO development
-    //return (bool) json_decode($response, true)["success"];
+    return (bool) json_decode($response, true)["success"];
 }
 
 function _defaultParams(): array
