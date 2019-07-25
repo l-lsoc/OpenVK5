@@ -1,9 +1,0 @@
-{extends '2-columns.shtml'}
-
-{block left}
-    {include 'sidebar.shtml'}
-{/block}
-
-{block right}
-    {include main}
-{/block}

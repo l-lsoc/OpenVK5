@@ -1,6 +1,0 @@
-<!-- feed BEGIN -->
-<!-- feed debug: {time()} -->
-<div n:foreach="$posts as $post" class="ovk-container post-container feed-contained-post">
-    {include 'post.shtml', post => $post}
-</div>
-<!-- feed END -->

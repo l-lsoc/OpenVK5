@@ -1,7 +1,0 @@
-<div class="pagination">
-    <ul>
-        <li n:class="(($_GET['page'] ?? 1) == 1)? disabled, prev, span-one-third"><a href="{$url}{$path}&page={max(($_GET['page'] ?? 1) - 1, 1)}">&larr; Назад</a></li>
-        <li class="active"><a href="#" style="text-align: center;width: 457px;">{($_GET['page'] ?? 1)}</a></li>
-        <li n:class="(sizeof($bag) < $perPage)? disabled, next, span-one-third"><a href="{$url}{$path}&page={($_GET['page'] ?? 1) + 1}">Дальше &rarr;</a></li>
-    </ul>
-</div>
