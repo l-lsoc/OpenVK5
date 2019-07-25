@@ -1,0 +1,46 @@
+{extends '@bodyless.shtml'}
+
+{block bodyPH}
+    <body style="margin:0;padding-top:40px;">
+        <div class="topbar">
+            <div class="topbar-inner">
+                <div class="container">
+                    <h3><a href="/">{$website_name}</a></h3>
+                    <ul class="nav">
+                        <li></li>
+                    </ul>
+                    <form class="pull-left" action="{$url}/?/search" method="POST">
+                        <input type="text" placeholder="Поиск людей" name="q">
+                    </form>
+                    <ul n:ifset="$logged_user" class="nav secondary-nav">
+                        <li>
+                            <a href="#">
+                                <i class="fas fa-bell"></i> <span class="label">0</span>
+                            </a>
+                        </li>
+                        <li>
+                            <!--<a href="#">
+                                <i class="fas fa-headphones"></i> Музыка
+                            </a>-->
+                        </li>
+                        <li style="width: 50px;">&nbsp;</li>
+                        <li>
+                            <a href="{$url}/?/user&id=0">
+                                <i class="fas fa-user-circle"></i> {$logged_user->first_name} {$logged_user->last_name}
+                            </a>
+                        </li>
+                        <li>
+                            <form action="{$url}/?/login&act=logout" enctype="multipart/form-data" method="POST">
+                                {$csrf_protection|noescape}
+                                <button type="submit" class="btn danger"><i class="fas fa-sign-out-alt"></i> Выйти</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- BEGIN RENDERING -->
+        {include content}
+        <!-- END RENDERING -->
+    </body>
+{/block}

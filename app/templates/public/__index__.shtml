@@ -1,0 +1,68 @@
+{extends '../2-columns-reverse-content.shtml'}
+
+{block title}
+  {$club->name}
+{/block}
+
+{block first}
+    <div class="ovk-container">
+        <h2 class="no-margin">{$club->name|truncate:22}</h2>
+    </div>
+    <div class="ovk-container">
+        <table class="openvk-userinfo zebra-striped">
+          <tbody>
+            <tr n:if="!empty($club->status)">
+                <td><em class="openvk-info-key">Статус:&nbsp;&nbsp;&nbsp;</em></td>
+                <td>{$club->status|truncate:100}</td>
+            </tr>
+            <tr n:if="!empty($club->about)">
+                <td><em class="openvk-info-key">О группе:&nbsp;&nbsp;&nbsp;</em></td>
+                <td>{$club->about|truncate:256}</td>
+            </tr>
+            <tr n:if="!empty(json_decode($club->info)->topic)">
+                <td><em class="openvk-info-key">Тематика:&nbsp;&nbsp;&nbsp;</em></td>
+                <td>{json_decode($club->info)->topic|truncate:32}</td>
+            </tr>
+          </tbody>
+        </table>
+    </div>
+    {include '../_components/wall.shtml', is_club => true, posts => $wall}
+{/block}
+
+{block second}
+    <div class="ovk-container">
+        <img style="max-width: 95%" src="{$url}/cdn/{getAvUrl(-1*$club->id)|noescape}" alt="Фотография {$club->name}" />
+        <hr/>
+        <center>
+            {ifset $logged_user}
+                <form n:if="!$subscribed" action="{$url}/?/friends&act=add&id={-1*$club->id}" method="POST">
+                    {$csrf_protection|noescape}
+                    <button class="btn primary" style="width:100%; text-align:center;">Вступить</button>
+                </form>
+                <form n:if="$subscribed" action="{$url}/?/friends&act=remove&id={-1*$club->id}" method="POST">
+                    {$csrf_protection|noescape}
+                    <button class="btn" style="width:100%; text-align:center;">Выйти</button>
+                </form>
+                {if canModifyGroupSettings($logged_user->id, $club->id)}
+                    <a href="{$url}/?/public&act=edit&id={$club->id}" class="btn" style="width: calc(100% - 30px); text-align:center;"><i class="fas fa-users-cog"></i> Управление</a>
+                {/if}
+            {else}
+                Войдите или зарегестрируйтесь, чтобы вступить в группу {$club->name}.
+            {/ifset}
+        </center>
+    </div>
+    <div class="ovk-container">
+        <a n:if="sizeof($followers) == 6" href="{$url}/?/friends&act=group_followers&id={$club->id}" style="float:right">Все</a>
+        <h3 class="no-margin">Подписчики</h3>
+        <center n:if="sizeof($followers) === 0">
+            У <strong>{$club->name}</strong> ещё нет подписчиков.
+        </center>
+        <div n:foreach="$followers as $rel" class="ovk-mini-usercard">
+            {var u = $rel->ref("users", "id")}
+            <img class="ava" src="{$url}/cdn/{getAvUrl($u->id, 0)|noescape}" alt="Фотография пользователя {$u->first_name}" />
+            <a href="{$url}/?/user&id={$u->id}">
+                {$u->first_name}<br/>{$u->last_name}
+            </a>
+        </div>
+    </div>
+{/block}

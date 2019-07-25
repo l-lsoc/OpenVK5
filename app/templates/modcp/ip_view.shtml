@@ -1,0 +1,108 @@
+{extends '../@modcp.shtml'} 
+
+{block content}
+    <section class="csect">
+        <section class="heading">
+            <h2>Информация об IP адресе ({$ip})</h2>
+        </section>
+        <section class="content">
+            <div class="row">
+                <div class="col-sm">
+                    <div id="map" style="width: 445px;height:300px;"></div>
+                    <br/>
+                    <table>
+                        <thead>
+                             <tr>
+                                 <th>Город</th>
+                                 <th>{$generic->city}</th>
+                             </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Регион</td>
+                                <td>{$generic->continent_code}</td>
+                            </tr>
+                            <tr>
+                                <td>Страна</td>
+                                <td>{$generic->country_code3} ({$generic->country_name})</td>
+                            </tr>
+                            <tr>
+                                <td>Код области</td>
+                                <td>{$generic->region}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-sm">
+                    <ul>
+                        <li>Количество регистраций: <strong>{sizeof($users)}</strong></li>
+                        <li>Количество сессий: <strong>{sizeof($sessions)}</strong></li>
+                    </ul>
+                    <hr/>
+                    <details>
+                        <summary>Пользователи, которые зарегестрировались с этим IP</summary>
+                        <div n:foreach="$users as $user" class="search-result row">
+                            <img
+                                src="{$url}/cdn/{getAvUrl($user->id), 0}"
+                                alt="Фотография"
+                                class="ava span1"
+                                />
+                            <div class="span4">
+                                <a href="{$url}/?/user&id={$user->id}"><strong>{$user->first_name|truncate:17} {$user->last_name|truncate:17}</strong></a>
+                                <div>
+                                    <br/>
+                                </div>
+                            </div>
+                        </div>
+                        <center n:if="sizeof($users) === 0">Информация отсутствует</center>
+                    </details>
+                    <details>
+                        <summary>Пользователи, которые использовали этот IP</summary>
+                        <div n:foreach="$sessions as $session" class="search-result row">
+                            {var user = $session->ref("users", "user")}
+                            {if !is_null($user)}
+                                <img
+                                    src="{$url}/cdn/{getAvUrl($user->id), 0}"
+                                    alt="Фотография"
+                                    class="ava span1"
+                                    />
+                                <div class="span4">
+                                    <a href="{$url}/?/user&id={$user->id}"><strong>{$user->first_name|truncate:17} {$user->last_name|truncate:17}</strong></a>
+                                    <div>
+                                        <br/>
+                                    </div>
+                                </div>
+                            {else}
+                                <em>[Пользователь удалён]</em><br/>
+                            {/if}
+                        </div>
+                        <center n:if="sizeof($sessions) === 0">Информация отсутствует</center>
+                    </details>
+                </div>
+            </div>
+        </section>
+    </section>
+    
+    <script>
+        const icon   = new H.map.Icon(`<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="black" stroke-width="4" fill="#ff0023"></circle><text x="12" y="17" font-size="12pt" text-anchor="middle" fill="black">•</text></svg>`);
+        const coords = {
+            lng: {$generic->longitude},
+            lat: {$generic->latitude}
+        };
+        
+        const Here   = new H.service.Platform({
+            'apikey': {$key}
+        });
+        const layers = Here.createDefaultLayers();
+        const map = new H.Map(
+            document.getElementById("map"),
+            layers.raster.terrain.map,
+            {
+            zoom: 7,
+            center: coords
+        });
+        
+        const marker = new H.map.Marker(coords, { icon: icon });
+        map.addObject(marker);
+    </script>
+{/block} 

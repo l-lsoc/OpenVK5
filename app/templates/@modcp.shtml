@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Модерация сайта</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css" />
+        <link rel="stylesheet" href="{$url}/assets/stylesheets/openvk.css" />
+        <link rel="stylesheet" href="{$url}/assets/stylesheets/moderation.css" />
+        <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+        <script src="https://knockoutjs.com/downloads/knockout-3.5.0.js"></script>
+        <script src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
+        <script src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
+        <script src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
+        <script src="https://kit.fontawesome.com/a201f874c2.js"></script>
+    </head>
+    <body>
+        <div class="breadcrumbs">
+            <a href="{$url}/?/"><i class="fas fa-home"></i> {$website_name}</a> &rarr; <a href="{$url}/?/modcp" class="current">Модерация контента</a>
+        </div>
+        <hr/>
+        <h1><i class="fas fa-user-nurse"></i> Модерация</h1>
+        <div>
+            <div class="row">
+                <nav class="col-sm-3">
+                    <h2>меню</h2>
+                    <a href="{$url}/?/modcp&act=content_reports">Жалобы пользователей</a>
+                    <a href="{$url}/?/modcp&act=queue">Очередь одобрения</a>
+                    <a href="{$url}/?/modcp&act=ip">Работа с IP-адресами</a>
+                    <a href="{$url}/?/modcp&act=users">Пользователи</a>
+                </nav>
+                <main class="contentbox col-sm-9">
+                    {include content}
+                </main>
+            </div>
+        </div>
+    </body>
+</html>

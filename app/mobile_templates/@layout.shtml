@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd"> 
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+        <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/pure-min.css" />
+        <link rel="stylesheet" href="{$url}/assets/stylesheets/mobile.css" />
+        <title>{ifset title}{include title} | {/ifset}{$website_name}</title>
+        <script src="https://hcaptcha.com/1/api.js"></script>
+    </head>
+    <body>
+        <header class="pure-menu pure-menu-horizontal">
+            <a href="?/" class="pure-menu-heading pure-menu-link">{$website_name}</a>
+            {ifset $logged_user}
+                <ul class="pure-menu-list">
+                </ul>
+            {else}
+                <ul class="pure-menu-list">
+                    <li class="pure-menu-item"><a href="?/login" class="pure-menu-link">Вход</a></li>
+                    <li class="pure-menu-item"><a href="?/register" class="pure-menu-link">Регистрация</a></li>
+                </ul>
+            {/ifset}
+        </header>
+        
+        <section class="cont">
+            <!-- BEGIN RENDERING -->
+            {include content}
+            <!-- END RENDERING -->
+        </section>
+        
+        <footer>
+            <p>Powered by <a href="{$url}/?/about:libresoc">{$server}</a></p>
+        </footer>
+        
+        <script src="https://cdn.jsdelivr.net/npm/umbrellajs" defer></script>
+        <script src="{$url}/assets/javascripts/mobile.js" defer></script>
+    </body>
+</html>

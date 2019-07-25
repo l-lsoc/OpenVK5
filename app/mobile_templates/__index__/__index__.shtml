@@ -1,0 +1,7 @@
+{extends '../@layout.shtml'}
+
+{block title}Главная страница{/block}
+
+{block content}
+    {(new Parsedown)->text(file_get_contents(SOCN_ROOT."app/templates/markdown/welcome.md"))|noescape}
+{/block}

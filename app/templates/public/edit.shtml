@@ -1,0 +1,153 @@
+{extends '../2-columns.shtml'}
+
+{block title}Настройки{/block}
+
+{block left}
+    {include "../sidebar.shtml"}
+{/block}
+
+{block right}
+    <div class="ovk-container">
+        <h1>Настройки</h1>
+        <ul class="tabs">
+            <li class="active"><a href="#general">Общие настройки</a></li>
+            <li><a href="#ava">Аватарка</a></li>
+            <li><a href="#members">Участники</a></li>
+            <li><a href="#stats">Статистика</a></li>
+        </ul>
+        
+        <div class="tab-content">
+            <div class="tab-pane active" id="general">
+                <form method="POST" action="{$url}/?/public&act=edit&id={$club->id}" enctype="multipart/form-data">
+                    <div class="clearfix">
+                        <label for="name">Название: </label>
+                        <div class="input">
+                            <input class="xlarge" type="text" name="name" style="height:unset;" size="30" id="name" value="{$club->name}" />
+                        </div>
+                    </div>
+                    <div class="clearfix">
+                        <label for="type_real">Тип: </label>
+                        <div class="input">
+                            Тип изменить после создания нельзя, простите.
+                        </div>
+                    </div>
+                    <div class="clearfix">
+                        <label for="topic">Тематика: </label>
+                        <div class="input">
+                            Тематику изменить после создания нельзя, простите.
+                        </div>
+                    </div>
+                    <div class="clearfix">
+                        <label for="about">Описание: </label>
+                        <div class="input">
+                            <textarea class="xlarge" name="about" id="about">{$club->about}</textarea>
+                        </div>
+                    </div>
+                    <div class="clearfix">
+                        <label for="status">Статус: </label>
+                        <div class="input">
+                            <input class="xlarge" type="text" name="status" style="height:unset;" size="30" id="status" value="{$club->status}" />
+                        </div>
+                    </div>
+                    {$csrf_protection|noescape}
+                    <div class="actions">
+                        <input type="submit" class="btn primary" value="Подтвердить" />
+                    </div>
+                </form>
+            </div>
+            <div class="tab-pane" id="ava">
+                <form action="/?/upload&type=avatar&group={$club->id}" method="POST" enctype="multipart/form-data">
+                    <div class="clearfix">
+                        <label for="status">Изображение: </label>
+                        <div class="input">
+                            <input type="file" name="blob[]" accept="image/*" required />
+                        </div>
+                    </div>
+                    {$csrf_protection|noescape}
+                    <div class="actions">
+                        <button class="btn primary"><i class="fas fa-save"></i> Сохранить</button>
+                    </div>
+                </form>
+            </div>
+            <div class="tab-pane" id="members">
+                {var this_url = "?/public&act=edit&id=".$club->id}
+                {if sizeof($followers->followers) === 0}
+                    <center>
+                        <img src="{$url}/assets/images/no_friends.png" /><br/>
+                        Подписчиков нет.
+                    </center>
+                 {else}
+                    <div class="ovk-friendcard row" n:foreach="$followers->followers as $follower">
+                        {var user = $follower->ref("users", "id")}
+                        <img class="ava span3" src="{$url}/cdn/{getAvUrl($follower->id, 0)}" alt="Фотография пользователя {$user->first_name}" />
+                        <div class="span8">
+                            <a href="{$url}/?/user&id={$follower->id}"><strong>
+                                {if $user->id === $club->owner}
+                                    <i class="fas fa-crown"></i>
+                                {elseif in_array($user->id, json_decode($club->coadmins))}
+                                    <i class="fas fa-user-nurse"></i>
+                                {/if}
+                                {$user->first_name|truncate:17} {$user->last_name|truncate:17}
+                            </strong></a><br/><br/>
+                            {if $user->id === $club->owner}
+                                Это владелец этой группы, ничего сделать с ним нельзя.
+                            {elseif canModifyGroupSettings($user->id, $club->id)}
+                                <form action="{$url}/?/public&act=rm_mod&id={$user->id}&club={$club->id}" method="POST" enctype="multipart/form-data" style="display:inline;margin:0;">
+                                     {$csrf_protection|noescape}
+                                     <button class="btn danger"><i class="fas fa-user-alt-slash"></i> Удалить из модераторов</button>
+                                </form>
+                            {else}
+                                <form action="{$url}/?/public&act=add_mod&id={$user->id}&club={$club->id}" method="POST" enctype="multipart/form-data" style="display:inline;margin:0;">
+                                     {$csrf_protection|noescape}
+                                     <button class="btn primary"><i class="fas fa-user-nurse"></i> В модераторы</button>
+                                </form>
+                                <form action="{$url}/?/public&act=ban&id={$user->id}&club={$club->id}" method="POST" enctype="multipart/form-data" style="display:inline;margin:0;">
+                                     {$csrf_protection|noescape}
+                                     <button class="btn danger"><i class="fas fa-ban"></i> Удалить из сообщества</button>
+                                </form>
+                            {/if}
+                        </div>
+                    </div>
+                    {include '../_components/pagination.shtml', path => $this_url, bag => $followers, perPage => 6}
+                {/if}
+            </div>
+            <div class="tab-pane" id="stats">
+                <div id="chart" style="width:600px; height:400px;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>$(function () { $('body').tabs(); });</script>
+    <script>
+        const females = {$followers->femaleCount};
+        const males   = {$followers->maleCount};
+        
+        const chart = echarts.init($("#chart").get(0));
+        chart.setOption({
+            title: {
+                text: 'Пол подписчиков'
+            },
+            tooltip: {},
+            legend: {},
+            xAxis: {
+                data: ['Пол']
+            },
+            yAxis: {
+                type: 'value',
+                data: ['Подписчиков']
+            },
+            series: [{
+                name: 'Девушки',
+                type: 'bar',
+                data: [females],
+                color: ['#ffd9e5']
+            }, {
+                name: 'Парни',
+                type: 'bar',
+                data: [males],
+                color: ['#a8b1ff']
+            }]
+        });
+    </script>
+{/block}
+ 

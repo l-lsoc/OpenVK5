@@ -1,0 +1,98 @@
+<html>
+    <head>
+        <title>Error 500</title>
+        <style>
+        body {
+            background-color: #7b3333;
+            color: red;
+            margin: 0;
+            font-family: sans-serif;
+        }
+        
+        h1 {
+            background-color: red;
+        }
+        
+        h3, address {
+            background-color: #bd0000;
+        }
+        
+        h1, h3, h2, address {
+            color: yellow;
+            margin: 0;
+        }
+        
+        pre {
+            color: #fff;
+            padding: 5px;
+        }
+        
+        center {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+        
+        #warning {
+            background-color: darkred;
+            color: yellow;
+        }
+        
+        main {
+            display: flex;
+            height: 85%;
+        }
+        
+        main > * {
+            margin: 20px;
+            flex: 8;
+        }
+        
+        main > *:first-of-type {
+            border-right: 1px dotted yellow;
+        }
+        </style>
+    </head>
+    <body>
+        <h1><span id="warning">/!\</span> An error occured</h1>
+        <h3>500 Error - Fatal error</h3>
+        <main>
+            <div>
+                <h2>Error summary</h2>
+                <details>
+                    <summary>Additional information</summary>
+                    <pre>An error occured (Component=Unknown,Cause=UnknownCauses):
+An error occured: <?=$e->getCode()?> (<?=$e->getMessage()?>) at <?=$e->getFile()?> @ line <?=$e->getLine()?>.
+Error occured. If this issue presists, please contact server administrator.
+
+<?=$e->getCode()?> <?php foreach(debug_backtrace() as $entry): ?>at <?=$entry["function"]?>(...) in <?=$entry["file"]?>:<?=$entry["line"]."\n"?><?php endforeach;?>
+</pre>
+                </details>
+            </div>
+            <div>
+                <h2>Server summary</h2>
+                <table>
+                    <tr>
+                        <td><strong>PHP</strong></td>
+                        <td><?=phpversion()?></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Server software</strong></td>
+                        <td><?=$_SERVER["SERVER_SOFTWARE"]?></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Document root</strong></td>
+                        <td><?=$_SERVER['DOCUMENT_ROOT']?></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Server administrator</strong></td>
+                        <td><?=$_SERVER['SERVER_ADMIN'] ?? "sa"?></td>
+                    </tr>
+                </table>
+            </div>
+        </main>
+        <center>
+            <address>Libresocial K+</address>
+        </center>
+    </body>
+</html>

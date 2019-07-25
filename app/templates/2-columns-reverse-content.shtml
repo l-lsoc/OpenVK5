@@ -1,0 +1,12 @@
+{extends 'menu.shtml'}
+
+{block main}
+    <div class="row">
+        <div class="span8">
+            {include first}
+        </div>
+        <div class="span4">
+            {include second}
+        </div>
+    </div>
+{/block}

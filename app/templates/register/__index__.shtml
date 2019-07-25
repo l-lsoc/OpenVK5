@@ -1,0 +1,109 @@
+{extends '../2-columns.shtml'}
+
+{block title}Регистрация{/block}
+
+{block left}
+    {include "../sidebar.shtml"}
+{/block}
+
+{block right}
+    <h1>Регистрация</h1>
+    <hr/>
+    <p>Нам приятно что вы выбрали нас. Для регистрации, пожалуйста, заполните эту форму: </p>
+    <form method="POST" action="{$url}/?/register" enctype="multipart/form-data">
+        <div class="clearfix">
+            <label for="fname">Имя: </label>
+            <div class="input">
+                <input class="xlarge" type="text" name="first-name" style="height:unset;" id="fname" required />
+            </div>
+        </div>
+        <div class="clearfix">
+            <label for="lname">Фамилия: </label>
+            <div class="input">
+                <input class="xlarge" type="text" name="last-name" style="height:unset;" size="30" id="lname" required />
+            </div>
+        </div>
+        <div class="clearfix">
+            <label for="sex">Пол: </label>
+            <div class="input">
+                <select id="sex" name="sex" required>
+                    <option value="0" selected>Женский</option>
+                    <option value="1" selected>Мужской</option>
+                </select>
+            </div>
+        </div>
+        <div class="clearfix">
+            <label>Дата рождения: </label>
+            <div class="input">
+                <div class="inline-inputs">
+                    <select name="bd-year" class="span2" required>
+                        <option disabled selected>Год</option>
+                        <option n:foreach="range(((int) date('Y') - 12), 1960, -1) as $year" value="{$year}">{$year}</option>
+                    </select>
+                    <select name="bd-month" class="span2" required>
+                        <option disabled selected>Месяц</option>
+                        <option n:foreach="range(1, 12) as $month" value="{$month}">{$month}</option>
+                    </select>
+                    <select name="bd-day" class="span2" required>
+                        <option disabled selected>День</option>
+                        <option n:foreach="range(1, 31) as $day" value="{$day}">{$day}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <hr/>
+        <div class="clearfix">
+            <label for="login">Логин: </label>
+            <div class="input">
+                <input class="xlarge" type="text" name="login" style="height:unset;" size="30" id="login" required/>
+            </div>
+        </div>
+        <div class="clearfix">
+            <label for="phone">Номер телефона: </label>
+            <div class="input">
+                <div class="input-prepend">
+                    <span class="add-on">+</span>
+                    <input class="xlarge" type="phone" name="phone" style="height:unset;" size="30" id="phone" required/>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix">
+            <label for="email">E-mail: </label>
+            <div class="input">
+                <input class="xlarge" type="email" name="email" style="height:unset;" size="30" id="email" required />
+            </div>
+        </div>
+        <div class="clearfix">
+            <label for="pass">Пароль: </label>
+            <div class="input">
+                <input class="xlarge" type="password" name="pass" style="height:unset;" size="30" id="pass" required />
+            </div>
+        </div>
+        <div class="clearfix">
+            <label for="inv">Инвайт-код: </label>
+            <div class="input">
+                <input class="xlarge" type="text" name="invite" style="height:unset;" size="30" id="inv" />
+            </div>
+        </div>
+        <hr/>
+        Примите условия обслуживания: <br/><br/>
+        <center><iframe src="{$url}/?/register&act=rules"></iframe></center><br/>
+        <div class="clearfix">
+            <label for="tos">Согласен(а) </label>
+            <div class="input">
+                <input type="checkbox" name="consent" style="height:unset;" size="30" id="tos" required />
+            </div>
+        </div>
+        <hr/>
+        <div class="clearfix">
+            <label>Капча </label>
+            <div style="margin-left: 150px;">
+                {$captcha|noescape}
+            </div>
+        </div>
+        {$csrf_protection|noescape}
+        <div class="actions">
+            <input type="submit" class="btn primary" value="Зарегистрироваться" />
+        </div>
+    </form>
+{/block}

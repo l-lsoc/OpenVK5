@@ -1,0 +1,19 @@
+{extends '../2-columns-reverse-content.shtml'}
+
+{block title}Новости{/block}
+
+{block first}
+    {include '../_components/wall.shtml', posts => $wall, user => $user, is_club => false, standaloneFeed => true}
+{/block}
+
+{block second}
+    <div class="ovk-container">
+         <h3><i class="fas fa-apple-alt"></i> Свойства</h3>
+         <!--{if ($_GET["attachments"] ?? 'yes') === 'yes'}
+            <a href="{$url}/?/feed&page={max($_GET['page'] ?? 1, 1)}&attachments=no">&rarr; Только без вложений</a>
+         {else}
+            <a href="{$url}/?/feed&page={max($_GET['page'] ?? 1, 1)}&attachments=no">&rarr; С вложениями</a>
+         {/if}-->
+         Свойств нет
+    </div>
+{/block}

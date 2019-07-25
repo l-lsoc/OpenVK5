@@ -1,0 +1,58 @@
+{extends '../2-columns-reverse-content.shtml'}
+
+{block title}
+  Просмотр фотографии
+{/block}
+
+{block first}
+    <br/>
+    <div id="editModal" class="modal hide fade" style="display: none;">
+        <form action="{$url}/?/photos&act=edit&id={$photo->id}" method="POST" enctype="multipart/form-data" style="margin:0;">
+            <div class="modal-header">
+                <a href="#" class="close">×</a>
+                <h3>Редактировать</h3>
+            </div>
+            <div class="modal-body">
+                <div class="clearfix">
+                    <label for="about">Описание: </label>
+                    <div class="input">
+                        <textarea id="about" name="about" id="about" rows="3" placeholder="здесь markdown не поддерживается">{$album->desc}</textarea>
+                    </div>
+                </div>
+                {$csrf_protection|noescape}
+            </div>
+            <div class="modal-footer">
+                <button class="btn primary">OK</button>
+            </div>
+        </form>
+    </div>
+    
+    <ul class="breadcrumb">
+        <li class="active">Фотография</li>
+    </ul>
+    
+    <div class="ovk-container openvk-photo-sep">
+        <a href="{$url}/cdn/images/{substr($photo->file, 0, 2)}/{$photo->file}/large.png">
+            <img src="{$url}/cdn/images/{substr($photo->file, 0, 2)}/{$photo->file}/medium.png" alt="{$photo->desc}" />
+        </a>
+        <p n:if="!empty($photo->desc)">{$photo->desc}</p>
+    </div>
+{/block}
+
+{block second}
+    <br/>
+    <div class="ovk-container" style="margin:0;">
+        <a href="{$url}/?/user&id={$photo->owner}">&rarr; Профиль автора</a><br/>
+        <hr/>
+        <a style="color:darkred;" href="{$url}/?/report&type=photo&id={$photo->id}"><i class="fas fa-flag"></i> Донести</a>
+        {if $logged_user->id === $photo->owner}
+            <hr/>
+            <button class="btn" data-controls-modal="editModal" data-backdrop="static" data-keyboard="true"><i class="fas fa-pen-alt"></i></button>
+            &nbsp;
+            <form action="{$url}/?/photos&act=delete&id={$photo->id}" method="POST" enctype="multipart/form-data" style="margin:0;display:inline;">
+                {$csrf_protection|noescape}
+                <button class="btn danger"><i class="fas fa-trash-alt"></i></button>
+            </form>
+        {/if}
+    </div>
+{/block}

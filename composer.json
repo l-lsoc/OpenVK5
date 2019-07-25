@@ -1,0 +1,9 @@
+{
+    "require": {
+        "latte/latte": "^2.5",
+        "erusev/parsedown": "^1.7",
+        "nette/utils": "^3.0",
+        "firebase/php-jwt": "^5.0",
+        "nette/database": "^3.0"
+    }
+}

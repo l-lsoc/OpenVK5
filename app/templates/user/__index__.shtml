@@ -1,0 +1,163 @@
+{extends '../2-columns-content.shtml'}
+
+{block title}
+  {$user->first_name} {$user->last_name}
+{/block}
+
+
+{block first}
+    {if is_null($user->block_reason)}
+    <div class="ovk-container">
+        <img style="max-width: 95%" src="{$url}/cdn/{getAvUrl($user->id)|noescape}" alt="Фотография пользователя {$user->first_name}" />
+        <hr />
+        <center>
+            {ifset $logged_user}
+                {if $user->id === $logged_user->id}
+                    <a href="{$url}/?/settings" class="btn primary" style="width:calc(100% - 30px); text-align:center;"><i class="fas fa-user-edit"></i> Редактировать</a>
+                {elseif $is_friend}
+                    <a href="{$url}/?/im&act=sel&id={$user->id}" class="btn" style="width:calc(100% - 30px); text-align:center;"><i class="fas fa-envelope"></i> Написать</a><br/><br/>
+                    <form action="{$url}/?/friends&act=remove&id={$user->id}" method="POST">
+                        {$csrf_protection|noescape}
+                        <button class="btn" style="width:100%; text-align:center;"><i class="fas fa-user-minus"></i> Удалить из друзей</button>
+                    </form>
+                {elseif $is_follower}
+                    {$user->first_name} читает Вас.<br/>
+                    <form action="{$url}/?/friends&act=add&id={$user->id}" method="POST">
+                        {$csrf_protection|noescape}
+                        <button class="btn success" style="width:100%; text-align:center;"><i class="fas fa-user-plus"></i> Принять заявку</button>
+                    </form>
+                    <a href="{$url}/?/im&act=sel&id={$user->id}" class="btn" style="width:calc(100% - 30px); text-align:center;"><i class="fas fa-envelope"></i> Написать</a>
+                {elseif $request_sent}
+                    Вы подписаны на {$petrovich->firstname($user->first_name, $petrovich::CASE_DATIVE)}.<br/>
+                    <a href="{$url}/?/im&act=sel&id={$user->id}" class="btn" style="width:calc(100% - 30px); text-align:center;"><i class="fas fa-envelope"></i> Написать</a><br/><br/>
+                    <form action="{$url}/?/friends&act=remove&id={$user->id}" method="POST">
+                        {$csrf_protection|noescape}
+                        <button class="btn" style="width:100%; text-align:center;"><i class="fas fa-user-minus"></i> Отменить заявку</button>
+                    </form>
+                {else}
+                    <form action="{$url}/?/friends&act=add&id={$user->id}" method="POST">
+                        {$csrf_protection|noescape}
+                        <button class="btn primary" style="width:100%; text-align:center;"><i class="fas fa-user-plus"></i> Добавить в друзья</button>
+                    </form>
+                    <a href="{$url}/?/im&act=sel&id={$user->id}" class="btn" style="width:calc(100% - 30px); text-align:center;"><i class="fas fa-envelope"></i> Написать</a>
+                {/if}
+            {else}
+                Войдите или зарегестрируйтесь, чтобы написать <b>{$petrovich->firstname($user->first_name, $petrovich::CASE_DATIVE)}</b> сообщение или добавить {$user->sex==="male"? "его":"её"} в друзья.
+            {/ifset}
+        </center>
+    </div>
+    <div class="ovk-container">
+        <a n:if="sizeof($followers) == 6" href="{$url}/?/friends&id={$user->id}#friends" style="float:right">Все</a>
+        <h3 class="no-margin">Друзья</h3>
+        <center n:if="sizeof($friends) == 0">
+            У {$petrovich->firstname($user->first_name, $petrovich::CASE_GENITIVE)} нет друзей.<br/>Станьте первым!
+        </center>
+        <div n:foreach="$friends as $friend" class="ovk-mini-usercard">
+            <img class="ava" src="{$url}/cdn/{getAvUrl($friend->id, 0)|noescape}" alt="Фотография пользователя {$friend->first_name}" />
+            <a href="{$url}/?/user&id={$friend->id}">
+                {$friend->first_name}<br/>{$friend->last_name}
+            </a>
+        </div>
+    </div>
+    <div class="ovk-container">
+        <a n:if="sizeof($followers) == 6" href="{$url}/?/friends&id={$user->id}#subs" style="float:right">Все</a>
+        <h3 class="no-margin">Подписки</h3>
+        <center n:if="sizeof($subscribed) == 0">
+            {$user->first_name} пока что не имеет подписок.
+        </center>
+        <div n:foreach="$subscribed as $u" class="ovk-mini-usercard">
+            <img class="ava" src="{$url}/cdn/{getAvUrl($u->id, 0)|noescape}" alt="Фотография пользователя {$u->first_name}" />
+            <a href="{$url}/?/user&id={$u->id}">
+                {$u->first_name}<br/>{$u->last_name}
+            </a>
+        </div>
+    </div>
+    <div class="ovk-container">
+        <a n:if="sizeof($followers) == 6" href="{$url}/?/friends&id={$user->id}#followers" style="float:right">Все</a>
+        <h3 class="no-margin">Подписчики</h3>
+        <center n:if="sizeof($followers) == 0">
+            На {$user->first_name} пока что не никто не подписан.
+        </center>
+        <div n:foreach="$followers as $u" class="ovk-mini-usercard">
+            <img class="ava" src="{$url}/cdn/{getAvUrl($u->id, 0)|noescape}" alt="Фотография пользователя {$u->first_name}" />
+            <a href="{$url}/?/user&id={$u->id}">
+                {$u->first_name}<br/>{$u->last_name}
+            </a>
+        </div>
+    </div>
+    <div class="ovk-container">
+        <h3 class="no-margin">Группы</h3>
+        <center n:if="sizeof($clubs) == 0">
+            {$user->first_name} пока что не состоит ни в одной группе.
+        </center>
+        <div n:foreach="$clubs as $rel" class="ovk-mini-usercard">
+            {php
+                $club = open_database()->table("groups")->get($rel->id * -1);
+                if(!$club) continue;
+            }
+            <img class="ava" src="{$url}/cdn/{getAvUrl(-1*($club->id), 0)|noescape}" alt="Фотография группы {$club->name}" />
+            <a href="{$url}/?/public&id={$club->id}">
+                {$club->name}
+            </a>
+        </div>
+    </div>
+    {else}
+        <div class="ovk-container">
+            <a href="{$url}/?/">&larr; Назад</a>
+        </div>
+    {/if}
+{/block}
+
+{block second}
+    {if is_null($user->block_reason)}
+    <div class="ovk-container">
+        <h2 class="no-margin normal-heading user-head--{$user->type}">
+          {$user->first_name|truncate:17} 
+            {if !empty($user->pseudo)}
+              ({$user->pseudo|truncate:17})
+            {/if}
+          {$user->last_name|truncate:17}
+          <sup n:if="$user->verified === 'verified'" class="ovk-verified" style="color:#74a2d6;"><i class="fas fa-certificate"></i></sup>
+        </h2>
+    </div>
+    <div class="ovk-container">
+        <table class="openvk-userinfo zebra-striped">
+          <tbody>
+            <tr n:if="!empty($user->status)">
+                <td><em class="openvk-info-key">Статус:&nbsp;&nbsp;&nbsp;</em></td>
+                <td>{$user->status|truncate:17}</td>
+            </tr>
+            <tr n:if="!empty($user->info)">
+                <td><em class="openvk-info-key">О себе:&nbsp;&nbsp;&nbsp;</em></td>
+                <td>{$user->info|truncate:17}</td>
+            </tr>
+            <tr n:foreach="json_decode($user->about, true) as $key=>$value">
+                <td><em class="openvk-info-key">{$key}:&nbsp;&nbsp;&nbsp;</em></td>
+                <td>{$value|truncate:17}</td>
+            </tr>
+          </tbody>
+        </table>
+    </div>
+    <div class="ovk-container" style="text-align:center;">
+        <div style="display:inline-block;">
+            <a href="{$url}/?/photos&id={$user->id}" style="color:inherit;">
+                <span style="font-size:1.5rem;">{$albums}</span><br/>
+                альбомов
+            </a>
+        </div>
+        <div class="span3 spacer" style="display:inline-block;">&nbsp;</div>
+        <div style="display:inline-block;">
+            <a href="{$url}/?/videos&id={$user->id}" style="color:inherit;">
+                <span style="font-size:1.5rem;">{$videos}</span><br/>
+                видео
+            </a>
+        </div>
+    </div>
+    
+    {include '../_components/wall.shtml', is_club => false, posts => $wall}
+    {else}
+        <center class="ovk-container">
+            К сожалению, нам пришлось заблокировать этого пользователя за нарушения правил сайта.
+        </center>
+    {/if}
+{/block}

@@ -1,0 +1,201 @@
+{php
+    $database = open_database();
+    $comments = $database->table("comments")->where([
+        "commentable_type" => "Post",
+        "commentable_id"   => $post->id,
+    ]);
+    $comment_count = $comments->count("'*'");
+    $comments = $database->table("comments")->where([
+        "commentable_type" => "Post",
+        "commentable_id"   => $post->id,
+    ]);
+    $comments = $comments->limit(4);
+    $comment_truncation = sizeof($comments) === 4;
+    $comments = array_slice(iterator_to_array($comments), 0, 3);
+}
+{php
+    $reposts = $database->table("post_attachments")->where([
+        "attachable_type" => "Post",
+        "attachable_id"   => $post->id,
+    ]);
+    $repost_count = $reposts->count("'*'");
+    $reposts = $database->table("post_attachments")->where([
+        "attachable_type" => "Post",
+        "attachable_id"   => $post->id,
+    ]);
+    $reposts      = $reposts->limit(5);
+}
+{php
+    if($post->owner > 0)
+        $owner = $post->ref("users", "owner");
+    else
+        $owner = $database->table("groups")->get(abs($post->owner));
+}
+<a name="_post{$post->id}"></a>
+<div class="post-information row">
+    <img
+        src="{$url}/cdn/{getAvUrl($post->owner), 0}"
+        alt="Фотография автора поста"
+        class="ava span1"
+        />
+    <div class="post-detailed-information span3">
+        <a href="{$url}/?/{($post->owner < 0)? 'public' : 'user'}&id={abs($post->owner)}"><strong>
+            {if $post->owner < 0}
+                {$owner->name|truncate:40}
+            {else}
+                {$owner->first_name|truncate:20} {$owner->last_name|truncate:20}
+            {/if}
+        </strong></a><br/>
+        <small class="post-date">
+            <a href="{$url}/?/wall&act=view&id={$post->id}">{zmdate(strtotime($post->edited ?? $post->date))}</a>
+            <acronym n:ifset="$post->edited" title="отредактировано">*</acronym>
+        </small>
+    </div>
+</div>
+<br/>
+<div n:if="$logged_user && postOwner($logged_user->id, $post)" class="post-edit-field" style="display: none;">
+    <form action="{$url}/?/wall&act=edit&id={$post->id}" method="POST" enctype="multipart/form-data" style="margin:0;">
+        {$csrf_protection|noescape}
+        <textarea name="post" class="post-edit-content"></textarea>
+        <br/>
+        <button class="btn success"><i class="fas fa-save"></i> Сохранить</button>
+    </form>
+</div>
+<div class="post-content">
+    <p>{$post->content}</p>
+    <div class="post-attachments">
+        {foreach $post->related("post_attachments.target")->limit(25) as $attachment}
+            {if !is_null($attachment)}
+                <div class="post-attachment">
+                    {if $attachment->attachable_type === "Image"}
+                        {var photo = $attachment->ref("photos", "attachable_id")}
+                        {var path  = substr($photo->file, 0, 2)."/".$photo->file}
+                        {if !$photo}
+                            {include 'attachment_gone.shtml'}
+                        {else}
+                            <a href="{$url}/?/photos&act=view&id={$photo->id}">
+                                <img src="{$url."/cdn/images/".$path}/thumbnail.gif" alt="{$photo->desc ?? 'Вложение'}" />
+                            </a>
+                        {/if}
+                    {elseif $attachment->attachable_type === "Video"}
+                        {var video = $attachment->ref("videos", "attachable_id")}
+                        {var path  = substr($video->file, 0, 2)."/".$video->file}
+                        {if !$video}
+                            {include 'attachment_gone.shtml'}
+                        {else}
+                            <div class="flowplayer">
+                                <video poster="{$url}/cdn/videos/{$path}.thumb.gif" width="400" height="200" controls>
+                                    <source type="video/webm" src="{$url}/cdn/videos/{$path}.webm">
+                                </video>
+                            </div>
+                        {/if}
+                    {elseif $attachment->attachable_type === "Post"}
+                        {var epost = $attachment->ref("posts", "attachable_id")}
+                        {if !$epost}
+                            {include 'attachment_gone.shtml'}
+                        {else}
+                            <div class="inline-post">
+                                {include 'post.shtml', post => $epost, show_comments => false, show_menu => false}
+                            </div>
+                        {/if}
+                    {/if}
+                </div>
+            {else}
+                {include 'attachment_gone.shtml'}
+            {/if}
+        {/foreach}
+    </div>
+</div>
+<hr n:if="$show_menu ?? true" style="margin:0;"/>
+<div n:if="$show_menu ?? true" class="post-menu">
+    <form action="{$url}/?/wall&act=like&id={$post->id}" method="POST" enctype="multipart/form-data" style="margin:0;">
+        {$csrf_protection|noescape}
+        {php
+            $liked_by_Html = '';
+            foreach(array_slice(json_decode($post->liked_by), 0, 5) as $lu) {
+                $link     = SOCN_CONFIG["URL"]."/?/user&id=$lu";
+                $ava_Url  = SOCN_CONFIG["URL"]."/cdn/".getAvUrl($lu, 0);
+                $liked_by_Html.="<div class='ovk-mini-usercard'><a href='$link'><img class='ava' src='$ava_Url' /></a></div>";
+            }
+            if($liked_by_Html === '') $liked_by_Html = 'Этот пост ещё никому не понравился';
+        }
+        <a class="ovk-like" data-content="{($liked_by_Html)|noescape}">
+            <i class="fa{in_array($logged_user->id, json_decode($post->liked_by)) ? 's':'r'} fa-heart"></i>
+            <span>{sizeof(json_decode($post->liked_by))}</span>
+        </a>
+    </form>
+    &nbsp;&nbsp;
+    <a class="ovk-comment">
+        <i class="far fa-comment"></i>
+        <span>{$comment_count}</span>
+    </a>
+    &nbsp;&nbsp;
+    <form action="{$url}/?/wall&act=repost&id={$post->id}" method="POST" enctype="multipart/form-data" style="margin:0;">
+        {$csrf_protection|noescape}
+        {php
+            /* NOTICE: Multiline IFs cause "malformed macro" error here.
+             * Tested on PHP7.2
+             */
+            
+            $reposted_by_Html = '';
+            $repost_count_dec = -0;
+            foreach($reposts as $repost) {
+                if(is_null(($oPost = $repost->ref("posts", "target")))) $repost_count--;
+                if(is_null(($oPost = $repost->ref("posts", "target")))) continue;
+            
+                $uReposter = $oPost->ref("users", "owner");
+                if(is_null($uReposter)) $repost_count--;
+                if(is_null($uReposter)) continue;
+                
+                $uReposter = $uReposter->id;
+                $link      = SOCN_CONFIG["URL"]."/?/user&id=$uReposter";
+                $ava_Url   = SOCN_CONFIG["URL"]."/cdn/".getAvUrl($uReposter, 0);
+                $reposted_by_Html.="<div class='ovk-mini-usercard'><a href='$link'><img class='ava' src='$ava_Url' /></a></div>";
+            }
+            if($reposted_by_Html === '') $reposted_by_Html = 'Этот пост ещё никто не репостнул';
+        }
+        <input type="hidden" name="message" />
+        <a class="ovk-repost" data-original-title="Репостнули" data-content="{($reposted_by_Html)|noescape}">
+            <i class="fas fa-retweet"></i>
+            {$repost_count}
+        </a>
+    </form>
+    <div class="post-menu-owner">
+        <div n:if="$logged_user && postOwner($logged_user->id, $post)" class="ovk-icon-reveal ovk-post-edit">
+            <i class="fas fa-pen-alt"></i>
+            <span class="ovk-help-text">Отредактировать</span>
+            &nbsp;|&nbsp;
+        </div>
+        <form n:if="$logged_user && canDeletePost($logged_user->id, $post)" action="{$url}/?/wall&act=delete&id={$post->id}" method="POST" enctype="multipart/form-data" style="margin:0;">
+            {$csrf_protection|noescape}
+            <div class="ovk-icon-reveal ovk-delete">
+                <i class="fas fa-trash-alt"></i>
+                <span class="ovk-help-text">Удалить</span>
+            </div>
+        </form>
+    </div>
+</div>
+<div n:if="$show_comments ?? true" class="post-comments">
+    <hr n:if="sizeof($comments) !== 0" style="margin:0;"/>
+    <br n:if="sizeof($comments) !== 0" style="margin:0;"/>
+    {foreach $comments as $comment}
+        {include 'comment.shtml', comment => $comment, as_inline => false}
+    {/foreach}
+    <a n:if="$comment_truncation" href="{$url}/?/wall&act=view&id={$post->id}#comments">Вы смотрите срез комментариев. Хотите просмотреть всю ветку?</a>
+    <form n:ifset="$logged_user" action="/?/wall&act=new_comment&id={$post->id}" method="POST" enctype="multipart/form-data" style="margin:0;" class="new-comment">
+        <hr style="margin:0;"/>
+        <br/>
+        <div>
+            <div class="wall-new-author">
+                <img src="{$url}/cdn/{getAvUrl($logged_user->id)|noescape}" alt="Ваша фотография" class="ava" />
+            </div>
+            <div class="wall-new-comment">
+                <textarea name="comment" placeholder="Есть какие-небудь мысли, {$logged_user->first_name}?"></textarea>
+                {$csrf_protection|noescape}
+            </div>
+        </div>
+        <br/>
+        <button class="btn primary" style="float:right;"><i class="fas fa-pen-fancy"></i> Написать</button>
+        <br/><br/>
+    </form>
+</div>

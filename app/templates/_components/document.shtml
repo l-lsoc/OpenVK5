@@ -1,0 +1,9 @@
+<div class="ovk-document row">
+    <div class="ovk-document-icon doc-{$document->type} span1">
+        <i class="fas fa-file"></i>
+    </div>
+    <div class="span3">
+        <a href="{$url}/?/docs&act=download&id={$document->id}"><strong>{$document->title}</strong></a><br/>
+        <small>{$document->estimated_size} KB</small>
+    </div>
+</div>

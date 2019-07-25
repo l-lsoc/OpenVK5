@@ -1,0 +1,22 @@
+<div n:class="!$as_inline ? post-comment, $as_inline ? inline-post">
+    <a name="_post{$post->id}_comment{$comment->id}"></a>
+    <div class="comment-information row">
+        <img
+            src="{$url}/cdn/{getAvUrl($comment->owner), 0}"
+            alt="Фотография автора комментария"
+            class="ava span1"
+            />
+        <div class="comment-detailed-information span4">
+            <a href="{$url}/?/user&id={$comment->owner}"><strong>
+                    {$comment->ref("users", "owner")->first_name|truncate:9} {$comment->ref("users", "owner")->last_name|truncate:9}
+            </strong></a><br/>
+            <small>{zmdate(strtotime($comment->edited ?? $comment->date))}<acronym n:ifset="$comment->edited" title="отредактировано">*</acronym></small>
+        </div>
+    </div>
+    <div class="comment-content">
+        <p style="margin:0;">{$comment->content}</p>
+        <div class="comment-attchments"></div>
+    </div>
+    <div class="comment-menu">
+    </div>
+</div>

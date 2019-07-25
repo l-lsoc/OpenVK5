@@ -1,0 +1,2 @@
+#!/usr/bin/bash
+sh ../app/handlers/upload/__index__/video/real_vhandle.sh $1 $2 $3 &

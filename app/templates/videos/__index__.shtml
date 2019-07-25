@@ -1,0 +1,74 @@
+{extends '../menu.shtml'}
+
+{block title}Видео{/block}
+
+{block main}
+    <br/>
+    <ul class="breadcrumb">
+        <li><a href="{$url}/?/user&id={$owner->id}">{$owner->first_name} {$owner->last_name}</a> <span class="divider">/</span></li>
+        <li class="active">Видео</li>
+    </ul>
+    
+    <div id="uploadModal" class="modal hide fade" style="display: none;">
+        <form action="{$url}/?/upload&type=video&redirect=true" method="POST" enctype="multipart/form-data" style="margin:0;">
+            <div class="modal-header">
+                <a href="#" class="close">×</a>
+                <h3>Загрузить видео</h3>
+            </div>
+            <div class="modal-body">
+                <div class="clearfix">
+                    <label for="blob">Видео: </label>
+                    <div class="input">
+                        <input class="xlarge" type="file" name="blob" id="blob" required />
+                    </div>
+                </div>
+                <div class="clearfix">
+                    <label for="name">Название: </label>
+                    <div class="input">
+                        <input class="xlarge" type="text" name="title" id="name" required />
+                    </div>
+                </div>
+                <div class="clearfix">
+                    <label for="about">Описание: </label>
+                    <div class="input">
+                        <textarea id="about" name="desc" id="about" rows="3" placeholder="Здесь markdown не поддерживается"></textarea>
+                    </div>
+                </div>
+                {$csrf_protection|noescape}
+            </div>
+            <div class="modal-footer">
+                <button class="btn primary">OK</button>
+            </div>
+        </form>
+    </div>
+    
+    <div class="ovk-container">
+        <div n:if="isset($logged_user) && $logged_user->id === $owner->id" style="float:right;">
+            <button class="btn primary" data-controls-modal="uploadModal" data-backdrop="static" data-keyboard="true"><i class="fas fa-cloud-upload-alt"></i> Загрузить</button>
+        </div>
+        <h1>Видео</h1>
+        <hr/>
+        {if sizeof($videos) === 0}
+            <center>
+                <span style="font-size:5rem;"><i class="fas fa-video"></i></span>
+                <p>Тут ничего нет.</p>
+            </center>
+        {else}
+            <ul class="media-grid">
+                <li n:foreach="$videos as $video">
+                    <a href="{$url}/?/videos&act=view&id={$video->id}" style="width:198px;text-align:center;">
+                        <img src="{$url}/cdn/videos/{substr($video->file, 0, 2)}/{$video->file}.thumb.gif" alt="{$photo->desc}" style="max-height:110px;" />
+                    </a>
+                </li>
+            </ul>
+            <br/>
+            <div class="pagination">
+                <ul>
+                    <li n:class="(($_GET['page'] ?? 1) == 1)? disabled, prev, span-one-third"><a href="{$url}/?/videos&id={$owner->id}&page={max(($_GET['page'] ?? 1) - 1, 1)}">&larr; Назад</a></li>
+                    <li class="active"><a href="#" style="text-align: center;width: 457px;">{($_GET['page'] ?? 1)}</a></li>
+                    <li n:class="(sizeof($posts) < 10)? disabled, next, span-one-third"><a href="{$url}/?/videos&id={$owner->id}&page={($_GET['page'] ?? 1) + 1}">Дальше &rarr;</a></li>
+                </ul>
+            </div>
+        {/if}
+    </div>
+{/block}

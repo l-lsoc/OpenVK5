@@ -1,0 +1,77 @@
+{extends '../2-columns.shtml'}
+
+{block title}Друзья{/block}
+
+{var this_url = "/?/friends".($_GET["id"] ?? $logged_user->id)}
+
+{block left}
+    {include "../sidebar.shtml"}
+{/block}
+
+{block right}
+    <div class="ovk-container">
+        <ul class="tabs">
+            <li class="active"><a href="#friends">Друзья</a></li>
+            <li><a href="#followers">Подписчики</a></li>
+            <li><a href="#subs">Заявки</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active" id="friends">
+                 {if sizeof($friends) === 0}
+                    <center>
+                        <img src="{$url}/assets/images/no_friends.png" /><br/>
+                        Друзей нет.
+                    </center>
+                 {else}
+                    <div class="ovk-friendcard row" n:foreach="$friends as $friend">
+                        {var user = $friend->ref("users", "id")}
+                        <img class="ava span3" src="{$url}/cdn/{getAvUrl($friend->id, 0)}" alt="Фотография пользователя {$user->first_name}" />
+                        <div class="span4">
+                            <a href="{$url}/?/user&id={$friend->id}"><strong>{$user->first_name|truncate:17} {$user->last_name|truncate:17}</strong></a><br/>
+                            {$user->status|truncate:100}
+                        </div>
+                    </div>
+                    {include '../_components/pagination.shtml', path => $this_url, bag => $friends, perPage => 6}
+                 {/if}
+            </div>
+            <div class="tab-pane" id="followers">
+                 {if sizeof($followers) === 0}
+                    <center>
+                        <img src="{$url}/assets/images/no_friends.png" /><br/>
+                        Подписчиков нет.
+                    </center>
+                 {else}
+                    <div class="ovk-friendcard row" n:foreach="$followers as $follower">
+                        {var user = $follower->ref("users", "id")}
+                        <img class="ava span3" src="{$url}/cdn/{getAvUrl($follower->id, 0)}" alt="Фотография пользователя {$user->first_name}" />
+                        <div class="span4">
+                            <a href="{$url}/?/user&id={$follower->id}"><strong>{$user->first_name|truncate:17} {$user->last_name|truncate:17}</strong></a><br/>
+                            {$user->status|truncate:100}
+                        </div>
+                    </div>
+                    {include '../_components/pagination.shtml', path => $this_url, bag => $followers, perPage => 6}
+                 {/if}
+            </div>
+            <div class="tab-pane" id="subs">
+                 {if sizeof($subs) === 0}
+                    <center>
+                        <img src="{$url}/assets/images/no_friends.png" /><br/>
+                        Подписок нет.
+                    </center>
+                 {else}
+                    <div class="ovk-friendcard row" n:foreach="$subs as $sub">
+                        {var user = $sub->ref("users", "id")}
+                        <img class="ava span3" src="{$url}/cdn/{getAvUrl($sub->id, 0)}" alt="Фотография пользователя {$user->first_name}" />
+                        <div class="span4">
+                            <a href="{$url}/?/user&id={$sub->id}"><strong>{$user->first_name|truncate:17} {$user->last_name|truncate:17}</strong></a><br/>
+                            {$user->status|truncate:100}
+                        </div>
+                    </div>
+                    {include '../_components/pagination.shtml', path => $this_url, bag => $subs, perPage => 6}
+                 {/if}
+            </div>
+        </div>
+    </div>
+    
+    <script>$(function () { $('body').tabs(); });</script>
+{/block}

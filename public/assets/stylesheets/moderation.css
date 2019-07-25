@@ -1,0 +1,93 @@
+body {
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    width: 90%;
+    margin: auto;
+    margin-top: 16px;
+    background-color: #fefefe;
+    user-select: none;
+}
+
+.no-margin {margin: 0;}
+
+.breadcrumbs {
+    color: #646464;
+}
+
+.breadcrumbs .current {
+    color: #b2b2b2;
+}
+
+.breadcrumbs > a {
+    color: inherit;
+    text-decoration: none;
+}
+
+hr {
+    border: 1px solid #f4f4f4;
+    background: unset;
+    height: unset;
+}
+
+nav {
+    display: flex;
+    flex-direction: column;
+    background: unset;
+    color: unset;
+    border: unset;
+    border-radius: unset;
+    margin: unset;
+}
+
+nav a {
+    color: #000!important;
+}
+
+h1, h2, h3 {
+    font-weight: 500;
+}
+
+nav h2 {
+    margin: 0;
+    text-transform: uppercase;
+    font-weight: 900;
+    color: #2d2d2d;
+    padding: 0;
+    padding-left: 12px;
+}
+
+main.contentbox {
+    user-select: text;
+}
+
+.csect {
+    background-color: #e1e3e7;
+    border-radius: 3px;
+    border: 1px solid #ececed;
+    user-select: none;
+}
+
+.csect > .heading {
+    background-color: #2f4c65;
+    border-radius: 3px 0;
+    color: #fff;
+    font-weight: 200!important;
+    padding: 8px;
+}
+
+.csect > .heading h2 {
+    margin: 0;
+    padding-bottom: .2rem;
+}
+
+.csect > .content {
+    margin: 8px;
+}
+
+.user-selectable {
+    user-select: text;
+}
+
+#express-note {
+    width: 100%;
+    resize: none;
+}

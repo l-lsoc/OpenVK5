@@ -1,0 +1,37 @@
+{extends '../2-columns.shtml'}
+
+{var this_url = "/?/public&act=list&id=".($_GET["id"] ?? $logged_user->id)}
+
+{block title}Группы{/block}
+
+{block left}
+    {include "../sidebar.shtml"}
+{/block}
+
+{block right}
+    <div class="ovk-container">
+        <a n:if="sizeof($clubs) !== 0" href="{$url}/?/public&act=new" class="btn primary" style="float:right;"><i class="fas fa-user-plus"></i> Новая группа</a>
+        <h1>Группы</h1>
+        {if sizeof($clubs) === 0}
+            <center>
+                <img src="{$url}/assets/images/no_friends.png" /><br/>
+                Вы не состоите ни в одной группе...<br/><br/>
+                <a href="{$url}/?/public&act=new" class="btn primary"><i class="fas fa-user-plus"></i> Создать новую?</a>
+            </center>
+        {else}
+            <div class="ovk-friendcard row" n:foreach="$clubs as $rel">
+                {php
+                    $club = open_database()->table("groups")->get($rel->id * -1);
+                    if(!$club) continue;
+                }
+                <img class="ava span3" src="{$url}/cdn/{getAvUrl(-1 * $club->id, 0)}" alt="Фотография группы {$club->name}" />
+                <div class="span4">
+                    <a href="{$url}/?/public&id={$club->id}"><strong>{$club->name|truncate:37}</strong></a><br/>
+                    {$club->status|truncate:100}
+                </div>
+            </div>
+            {include '../_components/pagination.shtml', path => $this_url, bag => $clubs, perPage => 6}
+        {/if}
+    </div>
+{/block}
+ 

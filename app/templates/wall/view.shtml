@@ -1,0 +1,28 @@
+{extends '../2-columns-reverse-content.shtml'}
+
+{block title}
+  Просмотр записи
+{/block}
+
+{block first}
+    <br/>
+    <ul class="breadcrumb">
+        <li><a href="{$url}/?/{$post->target < 0 ? 'public' : 'user'}&id={abs($post->target)}">Стена</a> <span class="divider">/</span></li>
+        <li class="active">Эта запись</li>
+    </ul>
+    <div class="ovk-container post-container">
+        {include '../_components/post.shtml', show_comments => false, show_menu => false, post => $post}
+    </div>
+    <br/>
+    {include '../_components/separatedCommentFeed.shtml', comments => $comments}
+{/block}
+
+{block second}
+    <br/>
+    <div class="ovk-container" style="margin:0;">
+        <a href="{$url}/?/{$post->owner < 0 ? 'public' : 'user'}&id={abs($post->owner)}">&rarr; Профиль автора</a><br/>
+        <a href="#comments">&rarr; Коментарии</a>
+        <hr/>
+        <a style="color:darkred;" href="{$url}/?/report&type=post&id={$post->id}"><i class="fas fa-flag"></i> Донести</a>
+    </div>
+{/block}
