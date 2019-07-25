@@ -6,7 +6,7 @@
 
 {block first}
     <div class="ovk-container">
-        <iframe id="ovk-messenger" allow="payment" sandbox="allow-scripts allow-popups allow-same-origin " scrolling="no" frameBorder="0" width="420" height="540" src="{$url}/?/im&act=messenger&id={$user->id}"></iframe>
+        <iframe id="ovk-messenger" allow="payment" sandbox="allow-scripts allow-popups allow-same-origin allow-top-navigation" scrolling="no" frameBorder="0" width="420" height="540" src="{$url}/?/im&act=messenger&id={$user->id}"></iframe>
     </div>
 {/block}
 
