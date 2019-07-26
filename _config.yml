@@ -1,2 +1,5 @@
 theme: jekyll-theme-leap-day
 show_downloads: true
+github:
+  zip_url: https://github.com/l-lsoc/OpenVK5/releases/download/v5.1.0-tp0/openvk-v5_1_0_tp_0.tar.xz
+  tar_url: https://github.com/l-lsoc/OpenVK5/releases/download/v5.1.0-tp0/openvk-v5_1_0_tp_0.tar.xz
