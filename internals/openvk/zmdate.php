@@ -22,7 +22,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 * @param {string} - строка с датой, полученной из date()
 * @see date()
 */
-function rusdate($datestring)
+function rusdate(string $datestring): string
   {
     return preg_replace([
       "/January/",
@@ -56,7 +56,7 @@ function rusdate($datestring)
 * Возвращает относительное время на руссокм
 * @param {int} date - дата в UNIX
 */
-function zmdate($date)
+function zmdate(int $date): string
   {
     $text ="";
     $diff = round(time() - $date);
@@ -75,6 +75,6 @@ function zmdate($date)
     return $diff === 5 ? "ровно 5 минут назад" : "$diff минут назад";
   }
   
-function zmbd($date) { return zmdate($date); }
-function zmdateapi($date) { return zmdate($date); }
-function zmd($date) { return "Сервер времени недоступен: E22VR-SKA-I-OVKCI"; } 
+function zmbd(int $date): string { return zmdate($date); }
+function zmdateapi(int $date): string { return zmdate($date); }
+function zmd(int $date): string { return "Сервер времени недоступен: E22VR-SKA-I-OVKCI"; } 

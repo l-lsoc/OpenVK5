@@ -1,0 +1,46 @@
+{extends '../@modcp.shtml'} 
+
+{block content}
+    <section class="csect alternate">
+        <section class="heading">
+            <h2>Жалобы</h2>
+        </section>
+        <section class="subheading">
+            {if isset($_GET['include_closed'])}
+                <a class="btn" href="{$url}/?/modcp&act=content_reports">Только открытые</a>
+            {else}
+                <a class="btn" href="{$url}/?/modcp&act=content_reports&include_closed=yes">Отобразить закрытые</a>
+            {/if}
+        </section>
+        <section class="content">
+            <div n:foreach="$reports as $report" class="report-result row">
+                <div class="col-sm-8">
+                    <a href="{$url}/?/modcp&act=content_report&id={$report->id}">Жалоба №{$report->id}</a><br/>
+                    <span class="reportable-type">{$report->type}</span>
+                </div>
+                <div class="col-sm-2" align="right">
+                    <span>Открыто {$report->reopen_count + 1} раз</span><br/>
+                    {if $report->verdict === NULL}
+                        <mark class="tag">Ожидается</mark>
+                    {elseif $report->verdict === 0}
+                        <mark class="tag secondary">Отклонена</mark>
+                    {else}
+                        <mark class="tag tertiary">Принята</mark>
+                    {/if}
+                </div>
+                <div class="col-sm-2" align="left">
+                    {var user = $report->ref("users", "owner")}
+                    <a href="{$url}/?/user&id={$user->id}">{$user->first_name|truncate:17}</a><br/>
+                    <span style="color:grey;">{zmdate(strtotime($report->time))}</span>
+                </div>
+            </div>
+            <center n:if="sizeof($reports) === 0">
+                Жалоб нет :)
+            </center>
+        </section>
+    </section>
+    <hr/>
+    <div style="padding-left: 100px;">
+        {include '../_components/pagination.shtml', path => "?/modcp&act=content_reports".(isset($_GET['include_closed']) ? '?/modcp&act=content_reports&include_closed=yes' : ''), bag => $reports, perPage => 20}
+    </div>
+{/block}

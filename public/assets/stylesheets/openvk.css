@@ -1,7 +1,6 @@
 .topbar-inner {
     background: linear-gradient(to top, #154572, #3c6993, #6d87a4);
 }
-
 ul.breadcrumb {
     background: linear-gradient(to bottom, #fbf3c4, #eee5b8);
     border-color: #d1c992;
@@ -66,7 +65,7 @@ nav > a > .fas, nav > a > .far {
     vertical-align: middle;
     margin: 5px;
 }
-.ovk-mini-usercard .ava, .wall-new-author .ava, .post-container .ava, .post-comment .ava, .conversation .ava, .message .ava, .search-result .ava {
+.ava {
     width:  48px;
     height: 48px;
     border-radius: 100%;

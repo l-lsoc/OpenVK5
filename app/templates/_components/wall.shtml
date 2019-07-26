@@ -10,6 +10,9 @@
         <div class="well">
             Новое видео: <input type="file" id="attachmentVideo" /><br/><button id="uploadVideoAttachment" class="btn primary" data-loading-text="Загрузка..."><i class="fas fa-cloud-upload-alt"></i> Загрузить</button>
         </div>
+        <div class="well">
+            Новая <acronym title="zip-файл с кадрами в формате png (00001.png, 00002.png...)">zip-анимация</acronym>: <input type="file" id="attachmentUgoria" /><br/><button id="uploadUgoriaAttachment" class="btn primary" data-loading-text="Загрузка..."><i class="fas fa-cloud-upload-alt"></i> Загрузить</button>
+        </div>
         <table id="attachmentList" class="zebra-striped" style="max-height: 200px; overflow-y: scroll;">
             <thead>
                 <tr>

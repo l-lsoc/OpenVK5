@@ -1,0 +1,71 @@
+{extends '../@modcp.shtml'} 
+
+{block content}
+    <section class="csect">
+        <section class="heading">
+            <h2>Жалоба</h2>
+        </section>
+        <section class="content">
+            <div class="row">
+                <div class="col-sm">
+                    <h3 class="no-margin">Информация</h3>
+                    <div>
+                        {var author = $report->ref('users', 'owner')}
+                        <strong>ID</strong>: {$report->id}<br/>
+                        <strong>Автор жалобы</strong>: <a href="{$url}/?/user&id={$author->id}">{$author->first_name|truncate:17} {$author->last_name|truncate:17}</a><br/>
+                        <strong>Составлена</strong>: {zmdate(strtotime($report->time))}<br/>
+                        <strong>Изменена</strong>: {zmdate(strtotime($report->changed ?? $report->time))}<br/>
+                        <strong>Описание: </strong><br/>
+                        <blockquote style="background:white;" cite="{$author->first_name|truncate:17} {$author->last_name|truncate:17}">
+                            {$report->explanation}
+                        </blockquote>
+                    </div>
+                    <h3 class="no-margin">Действия</h3>
+                    <div>
+                        {if is_null($report->verdict)}
+                            <form method="POST">
+                                <h4>Отклонить жалобу</h4>
+                                <input type="hidden" name="verdict" value="0" />
+                                <label for="reason"><strong>Причина</strong>: </label><br/>
+                                <textarea name="reason" id="reason" style="width:98%;resize:none;" rows=3>Я, {$logged_user->first_name}, закрываю жалобу по причине...</textarea>
+                                {$csrf_protection|noescape}
+                                <button class="primary"><i class="fas fa-gavel"></i> Применить</button>
+                            </form>
+                            <form method="POST">
+                                <h4>Удалить контент</h4>
+                                Данное действие автоматически закроет жалобу со статусом <strong>ПРИНЯТО</strong>.<br/>
+                                <input type="hidden" name="verdict" value="1" />
+                                <label for="reason"><strong>Причина</strong>: </label><br/>
+                                <textarea name="reason" id="reason" style="width:98%;resize:none;" rows=3>Я, {$logged_user->first_name}, подтверждаю корректность жалобы и закрываю её, удаляя спорный контент за нарушение.</textarea>
+                                {$csrf_protection|noescape}
+                                <button class="secondary"><i class="fas fa-gavel"></i> Применить</button>
+                            </form>
+                        {else}
+                            <p>Эта жалоба была закрыта <strong>{$report->ref('users', 'verdict_owner')->first_name|truncate:17}</strong>, однако вы можете её переоткрыть.</p>
+                            <form method="POST">
+                                <h4>Открыть заново жалобу</h4>
+                                <input type="hidden" name="verdict" value="-1" />
+                                <label for="reason"><strong>Причина</strong>: </label><br/>
+                                <textarea name="reason" id="reason" style="width:98%;resize:none;" rows=3></textarea>
+                                {$csrf_protection|noescape}
+                                <button class="tertiary"><i class="fas fa-gavel"></i> Открыть</button>
+                            </form>
+                        {/if}
+                    </div>
+                </div>
+                <div class="col-sm">
+                    <h3 class="no-margin">Спорный контент</h3>
+                    <iframe id="cont" src="{$url}{$content}" sandbox="allow-scripts allow-same-origin" width=420 height=350></iframe>
+                    <script>
+                        let frame = document.querySelector("#cont");
+                        frame.onload = function(){ setTimeout("frame.contentWindow.scrollTo(240, 0)", 1) }
+                    </script>
+                    <h3 class="no-margin">Коментарии</h3>
+                    {foreach $comments as $comment}
+                        {include '../_components/comment.shtml', comment => $comment, as_inline => false}
+                    {/foreach}
+                </div>
+            </div>
+        </section>
+    </section>
+{/block}

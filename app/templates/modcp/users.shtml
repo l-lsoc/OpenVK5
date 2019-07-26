@@ -1,4 +1,4 @@
- {extends '../@modcp.shtml'} 
+{extends '../@modcp.shtml'} 
 
 {block content}
     <section n:ifset="$user" class="csect">
