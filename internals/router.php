@@ -8,6 +8,11 @@ set_exception_handler(function($e): bool {
     return true;
 });
 
+function realIp()
+{
+    return $_SERVER["HTTP_X_REAL_IP"] ?? $_SERVER["HTTP_X_TRUE_CLIENT_IP"] ?? $_SERVER["REMOTE_ADDR"];
+}
+
 function _currentUser(): ?ActiveRow
 {
     $database = DB::getInstance();
@@ -19,7 +24,8 @@ function _currentUser(): ?ActiveRow
     $tok  = State::get("tok");
     if(is_null($user) || is_null($tok)) return null;
     
-    $token = $tokens->where(["user" => $user, "ip" => $_SERVER["REMOTE_ADDR"]])->fetch();
+    $ip    = realIp();
+    $token = $tokens->where(["user" => $user, "ip" => $ip])->fetch();
     if(!$token) return null;
     if(!hash_equals($token->token, $tok)) return null;
     

@@ -13,7 +13,7 @@ function authenticateUser(string $login, string $password): void
     if(!hash_equals($hash, hash("whirlpool", "$password$salt"))) throw new Exception;
     
     State::set("uuid", $user->id);
-    State::set("tok", mktoken($user->id, $_SERVER["REMOTE_ADDR"]));
+    State::set("tok", mktoken($user->id, realIp()));
 }
 
 /**
